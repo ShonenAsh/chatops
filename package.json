@@ -1,0 +1,24 @@
+{
+  "name": "chatops",
+  "version": "1.0.0",
+  "description": "A dialogflow chatbot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShonenAsh/chatops.git"
+  },
+  "author": "ashish",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ShonenAsh/chatops/issues"
+  },
+  "homepage": "https://github.com/ShonenAsh/chatops#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^1.19.1",
+    "puppeteer": "^1.19.0"
+  }
+}
