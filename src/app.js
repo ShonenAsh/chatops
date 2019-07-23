@@ -1,20 +1,37 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
-
 const app = express();
 
-// // ROUTES
-// app.get('/',(req,res) => {
-//     res.send('Me and the boizzz!.');
-// });
+async function main() {
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox'],
+  });
 
-// //Listening
-// app.listen(1080);
+  app.use(async (req, res) => {
+    const {url} = req.query;
 
-(async () => {
-    const browser = await puppeteer.launch();
+    if (!url) {
+      return res.send(
+        'Please provide URL as GET parameter, for example: <a href="/?url=https://example.com">?url=https://example.com</a>'
+      );
+    }
+
     const page = await browser.newPage();
-    const url = 'https://libgen.is';
     await page.goto(url);
-    await browser.close();
-})();
+    const imageBuffer = await page.screenshot();
+
+    res.set('Content-Type', 'image/png');
+    res.send(imageBuffer);
+  });
+
+  const server = app.listen(process.env.PORT || 8080, err => {
+    if (err) {
+      return console.error(err);
+    }
+    const {port} = server.address();
+    console.info(`App listening on port ${port}`);
+  });
+
+}
+
+main();
