@@ -7,21 +7,18 @@ async function main() {
     args: ['--no-sandbox'],
   });
 
-  app.use(async (req, res) => {
-    const {url} = req.query;
+  app.get('/', async (req, res) => {
 
-    if (!url) {
-      return res.send(
-        'Please provide URL as GET parameter, for example: <a href="/?url=https://example.com">?url=https://example.com</a>'
-      );
-    }
-
+    const url = 'https://libgen.is';
     const page = await browser.newPage();
-    await page.goto(url);
-    const imageBuffer = await page.screenshot();
+    await page.goto(url, {waitUntil: 'networkidle2'});
+    const fic = page.$('a[href="/foreignfiction/index.php"]');
+    page.click('a[href="/foreignfiction/index.php"]');
 
-    res.set('Content-Type', 'image/png');
-    res.send(imageBuffer);
+    var html = page.content();
+
+    //res.set('Content-Type', 'image/png');
+    res.send(html);
   });
 
   const server = app.listen(process.env.PORT || 8080, err => {
