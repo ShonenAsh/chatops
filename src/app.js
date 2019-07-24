@@ -2,24 +2,29 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 const app = express();
 
-async function main() {
-  const browser = await puppeteer.launch({
-    args: ['--no-sandbox'],
-  });
+(async function main() {
 
-  app.get('/', async (req, res) => {
+  try {
+    const browser = await puppeteer.launch();
 
-    const url = 'https://libgen.is';
-    const page = await browser.newPage();
-    await page.goto(url, {waitUntil: 'networkidle2'});
-    const fic = page.$('a[href="/foreignfiction/index.php"]');
-    page.click('a[href="/foreignfiction/index.php"]');
+    app.get('/', async (req, res) => {
 
-    var html = page.content();
+      const url = 'https://libgen.is';
+      const page = await browser.newPage();
+      await page.goto(url); //, {waitUntil: 'networkidle0'});
+      const fic = await page.$('a[href="/foreignfiction/index.php"]');
+      await fic.click();
+      await page.waitForNavigation();
 
-    //res.set('Content-Type', 'image/png');
-    res.send(html);
-  });
+      let img = await page.screenshot();
+      res.set('Content-Type', 'image/png');
+      res.send(img);
+        
+    });
+
+  } catch (err) {
+  console.error(err);
+}
 
   const server = app.listen(process.env.PORT || 8080, err => {
     if (err) {
@@ -29,6 +34,4 @@ async function main() {
     console.info(`App listening on port ${port}`);
   });
 
-}
-
-main();
+})();
