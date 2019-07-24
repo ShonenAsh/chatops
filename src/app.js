@@ -22,16 +22,21 @@ const app = express();
         
     });
 
+    app.get('/:bookname', async (req,res) => {
+        res.send(req.params.bookname);
+    });
+
   } catch (err) {
   console.error(err);
 }
 
+    // Listening to requests
   const server = app.listen(process.env.PORT || 8080, err => {
-    if (err) {
-      return console.error(err);
-    }
-    const {port} = server.address();
-    console.info(`App listening on port ${port}`);
+  if (err) {
+    return console.error(err);
+  }
+  const {port} = server.address();
+  console.info(`App listening on port ${port}`);
   });
 
 })();
