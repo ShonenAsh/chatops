@@ -27,14 +27,16 @@ const clickByText = async (page, text) => {
 
   try {
 
-    app.get('/', async (req, res) => {
+    app.get('/:bookname', async (req, res) => {
+
+      let bookname = req.params.bookname;
 
       const browser = await puppeteer.launch();
-      const url = 'http://libgen.is/search.php?req=java+oop&open=0&res=25&view=simple&phrase=1&column=def';
+      const url = `http://libgen.is/search.php?req=${bookname}&open=0&res=25&view=simple&phrase=1&column=def`;
 
       const page = await browser.newPage();
       await page.goto(url); //, {waitUntil: 'networkidle0'});
-      await clickByText(page,'fundamentals');
+      await clickByText(page,bookname);
       await page.waitForNavigation({waitUntil: 'load'});
       console.log("Current page:", page.url());
 
@@ -44,16 +46,6 @@ const clickByText = async (page, text) => {
       await browser.close();
 
     });
-
-    // "/bookname/genre"
-    app.get('/:bookname/:genre', async (req,res) => {
-      let bookname=req.params.bookname;
-      let genre = req.params.genre;
-
-      res.send({Name: bookname, Genre: genre});
-
-    });
-
   } catch (err) {
   console.error(err);
 }
