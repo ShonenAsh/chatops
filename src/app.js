@@ -26,17 +26,23 @@ const clickByText = async (page, text) => {
 (async () => {
 
   try {
-    const browser = await puppeteer.launch({headless:false});
-    const url = 'http://libgen.is/search.php?req=java+oop&open=0&res=25&view=simple&phrase=1&column=def';
 
     app.get('/', async (req, res) => {
 
+      const browser = await puppeteer.launch();
+      const url = 'http://libgen.is/search.php?req=java+oop&open=0&res=25&view=simple&phrase=1&column=def';
+
       const page = await browser.newPage();
       await page.goto(url); //, {waitUntil: 'networkidle0'});
-      await clickByText(page,'java fundamentals');
+      await clickByText(page,'fundamentals');
       await page.waitForNavigation({waitUntil: 'load'});
       console.log("Current page:", page.url());
-      
+
+      const link = await page.$eval('a[title="Gen.lib.rus.ec"]', a => a.getAttribute('href'));
+      console.log(link);
+      res.send(link);
+      await browser.close();
+
     });
 
     // "/bookname/genre"
@@ -46,27 +52,6 @@ const clickByText = async (page, text) => {
 
       res.send({Name: bookname, Genre: genre});
 
-    });
-
-    app.get('/:bookname', async (req,res) => {
-      let bookname=req.params.bookname;
-
-      const page = await browser.newPage();
-      await page.goto(url, {waitUntil: 'networkidle0'});
-      const selector = '#searchform';
-      await page.waitForSelector(selector);
-      await page.type(selector,bookname);
-
-      // const input = await page.$('input[name="req"]');
-      // input.value = await bookname;
-
-      const searchButton = await page.$('input[type="submit"]');
-      await searchButton.click();
-      await page.waitForNavigation();
-
-      const html = await page.content();
-      res.send(html);
-      console.log(html);
     });
 
   } catch (err) {
