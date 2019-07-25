@@ -6,20 +6,23 @@ const app = express();
 
   try {
     const browser = await puppeteer.launch({headless:false});
-    const url = 'https://libgen.is';
+    const url = 'http://libgen.is/search.php?req=java+oop&open=0&res=25&view=simple&phrase=1&column=def';
 
     app.get('/', async (req, res) => {
 
       const page = await browser.newPage();
       await page.goto(url); //, {waitUntil: 'networkidle0'});
-      const fic = await page.$('a[href="/foreignfiction/index.php"]');
-      await fic.click();
-      await page.waitForNavigation();
+      const fic = await page.$('table.c tbody');
 
-      let img = await page.screenshot();
-      res.set('Content-Type', 'image/png');
-      res.send(img);
-        
+      const data = await page.evaluate(() => {
+        const tds = Array.from(document.querySelectorAll('table.c tbody tr'))
+        return tds.map(td => td.innerHTML)
+      });
+
+      console.log(data);
+
+      res.send(data);
+      
     });
 
     // "/bookname/genre"
