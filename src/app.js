@@ -1,8 +1,29 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
+const cheerio = require('cheerio');
 const app = express();
 
-(async function main() {
+const escapeXpathString = str => {
+  const splitedQuotes = str.replace(/'/g, `', "'", '`);
+  return `concat('${splitedQuotes}', '')`;
+};
+
+const clickByText = async (page, text) => {
+  const escapedText = escapeXpathString(text);
+  const linkHandlers = await page.$x(`//a[contains(translate(text(),
+  'ABCDEFGHIJKLMNOPURSTUWXYZ',
+  'abcdefghijklmnopurstuwxyz'),
+  ${escapedText})]`);  
+
+
+  if (linkHandlers.length > 0) {
+    await linkHandlers[0].click();
+  } else {
+    console.log("Link not found!");
+  }
+};
+
+(async () => {
 
   try {
     const browser = await puppeteer.launch({headless:false});
@@ -12,16 +33,9 @@ const app = express();
 
       const page = await browser.newPage();
       await page.goto(url); //, {waitUntil: 'networkidle0'});
-      const fic = await page.$('table.c tbody');
-
-      const data = await page.evaluate(() => {
-        const tds = Array.from(document.querySelectorAll('table.c tbody tr'))
-        return tds.map(td => td.innerHTML)
-      });
-
-      console.log(data);
-
-      res.send(data);
+      await clickByText(page,'java fundamentals');
+      await page.waitForNavigation({waitUntil: 'load'});
+      console.log("Current page:", page.url());
       
     });
 
