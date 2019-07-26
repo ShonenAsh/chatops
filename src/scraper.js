@@ -11,7 +11,7 @@ request(`http://libgen.is/search.php?req=java&open=0&res=25&view=simple&phrase=1
             const id = child.text().toString();
             if(!isNaN(id)) {
                 const link = $(`a[id=${id}]`);
-                const title = (link.text().toString()).replace(((link.children()).text().toString()),'');
+                const title = link.children().remove().end().text();
                 const href =  `libgen.is/${link.attr('href')}`;
                 const res = `Title = ${title}\nLink= ${href}\n`;
                 console.log(res);
