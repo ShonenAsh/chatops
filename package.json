@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon ./src/app.js",
-    "test": "nodemon ./src/test.js"
+    "test": "nodemon ./src/scraper.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
     "express": "^4.17.1",
     "nodemon": "^1.19.1",
     "puppeteer": "^1.19.0",
+    "request": "^2.88.0",
     "scrapper": "^1.0.1"
   }
 }
