@@ -12,7 +12,7 @@ function main() {
 
       let bookname = req.query.name;
 
-      scraper(bookname,res,true);
+      scraper.scrapeBook(bookname.replace(/\s/g,"+"),res,true);
 
       // const link = await page.$eval('a[title="Gen.lib.rus.ec"]', a => a.getAttribute('href'));
 
@@ -20,12 +20,12 @@ function main() {
 
     app.get('/book', async (req,res) => {
       const bookname = req.query.name;
-      scraper(bookname,res,false);
+      scraper.scrapeBook(bookname.replace(/\s/g,"+"),res,false);
     });
 
     app.get('/author', async (req,res) => {
-      const authorname = req.query.name;
-      res.send(authorname);
+      const authorName = req.query.name;
+      scraper.author(authorName.replace(/\s/g,"+"),res);
     });
 
   } catch (err) {
